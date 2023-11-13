@@ -6,18 +6,13 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Task task1 = new Task("Task1", "Описание Task1");
-        Task task2 = new Task("Task2", "Описание Task2");
-        Subtask subtask1 = new Subtask("Subtask1", "Описание Subtask1");
-        Subtask subtask2 = new Subtask("Subtask2", "Описание Subtask2");
-        Subtask subtask3 = new Subtask("Subtask3", "Описание Subtask3");
-        ArrayList<Subtask> subtaskArrayList1 = new ArrayList<>();
-        subtaskArrayList1.add(subtask1);
-        subtaskArrayList1.add(subtask2);
-        ArrayList<Subtask> subtaskArrayList2 = new ArrayList<>();
-        subtaskArrayList2.add(subtask3);
-        Epic epic1 = new Epic("Epic1", "Описание Epic1", subtaskArrayList1);
-        Epic epic2 = new Epic("Epic2", "Описание Epic2", subtaskArrayList2);
+        Task task1 = new Task("Task1", "Описание Task1", Status.NEW);
+        Task task2 = new Task("Task2", "Описание Task2", Status.NEW);
+        Epic epic1 = new Epic("Epic1", "Описание Epic1");
+        Epic epic2 = new Epic("Epic2", "Описание Epic2");
+        Subtask subtask1 = new Subtask("Subtask1", "Описание Subtask1", Status.NEW, epic1);
+        Subtask subtask2 = new Subtask("Subtask2", "Описание Subtask2", Status.NEW, epic1);
+        Subtask subtask3 = new Subtask("Subtask3", "Описание Subtask3", Status.NEW, epic2);
 
         manager.createTask(task1);
         manager.createTask(task2);
@@ -35,8 +30,6 @@ public class Main {
         subtask1.setStatus(Status.IN_PROGRESS);
         subtask2.setStatus(Status.IN_PROGRESS);
         subtask3.setStatus(Status.DONE);
-        epic1.setStatus(Status.NEW);
-        epic2.setStatus(Status.NEW);
 
         showAllTasks();
         System.out.println("________________________");

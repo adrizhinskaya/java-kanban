@@ -4,25 +4,25 @@ public class Epic extends Task {
     private ArrayList<Subtask> subtasks = new ArrayList<>();
 
     public Epic(String name, String description) {
-        super(name, description);
+        super(name, description, Status.NEW);
     }
 
     public Epic(String name, String description, ArrayList<Subtask> subtasks) {
-        super(name, description);
-        for (Subtask s : subtasks) {
-            s.setEpic(this);
-        }
+        super(name, description, Status.NEW);
         this.subtasks = subtasks;
-        Status epicStatus = checkSubtasksAndChooseStatus();
-        setStatus(epicStatus);
+        updateStatus();
     }
 
     public ArrayList<Subtask> getSubtasks() {
         return subtasks;
     }
 
-    @Override
-    public void setStatus(Status status) {
+    public void addSubtask(Subtask subtask) {
+        this.subtasks.add(subtask);
+        updateStatus();
+    }
+
+    public void updateStatus() {
         super.setStatus(checkSubtasksAndChooseStatus());
     }
 
@@ -48,15 +48,12 @@ public class Epic extends Task {
     }
 
     private boolean containsEqualValues() {
-        boolean isStatucesEqual = true;
-
-        for (int i = 0; i <= subtasks.size() - 2; i++) {
-            if (subtasks.get(i).getStatus().equals(subtasks.get(i + 1).getStatus())) {
-                isStatucesEqual = true;
-            } else {
-                isStatucesEqual = false;
+        Status status = subtasks.get(0).getStatus();
+        for (int i = 1; i < subtasks.size(); i++) {
+            if (!status.equals(subtasks.get(i).getStatus())) {
+                return false;
             }
         }
-        return isStatucesEqual;
+        return true;
     }
 }
