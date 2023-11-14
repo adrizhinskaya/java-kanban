@@ -39,6 +39,7 @@ public class Manager {
     void createSubtask(Subtask subtask) {
         Integer subtaskId = generateId();
         subtask.setId(subtaskId);
+        epicMap.get(subtask.getEpicId()).addSubtask(subtask);
         subtaskMap.put(subtaskId, subtask);
     }
 
@@ -48,13 +49,13 @@ public class Manager {
         epicMap.put(epicId, epic);
     }
 
-    void updateTask(Task task) {
+    void updateTask(Task task) { // не понимаю зачем нам этот метод если в мапе храняться объекты (изменяются обект - изменяется он же и в мапе)
         taskMap.put(task.getId(), task);
     }
 
     void updateSubtask(Subtask subtask) {
-        subtask.getEpic().updateStatus();
-        subtaskMap.put(subtask.getId(), subtask);
+        epicMap.get(subtask.getEpicId()).updateStatus(); // так как у нас нет привязки к событию subtask.setStatus- статус эпика не обновится, поэтому все изменения подзадась должны проходить через этот метод
+        subtaskMap.put(subtask.getId(), subtask); // в subtaskMap тоже хранятся объекты, непонятно зачем их менять напрямую
     }
 
     void updateEpic(Epic epic) {
@@ -66,14 +67,20 @@ public class Manager {
     }
 
     void removeSubtaskById(Integer id) {
-        Subtask currentSubtask = getSubtaskById(id);
-        currentSubtask.getEpic().updateStatus();
-        subtaskMap.remove(currentSubtask.getId());
+        Subtask currentSubtask = getSubtaskById(id); // находим подзадачу
+        Epic currentEpic = getEpicById(currentSubtask.getEpicId()); // находим эпик этой подзадачи в epicMap
+        currentEpic.getSubtasks().remove(currentSubtask);// удаляем в эту подзадачу из списка подзада эпика
+        currentEpic.updateStatus(); // обновляем статус эпика
+        subtaskMap.remove(currentSubtask.getId()); // удаляем подзадачу из subtaskMap
     }
 
     void removeEpicById(Integer id) {
         Epic currentEpic = getEpicById(id);
-        currentEpic.getSubtasks().clear();
+        for (Subtask s : subtaskMap.values()) {
+            if(s.getEpicId().equals(id)) {
+                subtaskMap.remove(s.getId());
+            }
+        }
         epicMap.remove(currentEpic.getId());
     }
 
