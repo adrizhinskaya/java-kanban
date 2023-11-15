@@ -49,17 +49,23 @@ public class Manager {
         epicMap.put(epicId, epic);
     }
 
-    void updateTask(Task task) { // не понимаю зачем нам этот метод если в мапе храняться объекты (изменяются обект - изменяется он же и в мапе)
+    void updateTask(Task task) {
         taskMap.put(task.getId(), task);
     }
 
     void updateSubtask(Subtask subtask) {
-        epicMap.get(subtask.getEpicId()).updateStatus(); // так как у нас нет привязки к событию subtask.setStatus- статус эпика не обновится, поэтому все изменения подзадась должны проходить через этот метод
-        subtaskMap.put(subtask.getId(), subtask); // в subtaskMap тоже хранятся объекты, непонятно зачем их менять напрямую
+        for (Subtask s : epicMap.get(subtask.getEpicId()).getSubtasks()) {
+            if(s.getId() == subtask.getId()) {
+                s = subtask;
+            }
+        }
+        getEpicById(subtask.getEpicId()).updateStatus();
+        subtaskMap.put(subtask.getId(), subtask);
     }
 
     void updateEpic(Epic epic) {
-        epicMap.put(epic.getId(), epic);
+        getEpicById(epic.getId()).setName(epic.getName());
+        getEpicById(epic.getId()).setDescription(epic.getDescription());
     }
 
     void removeTaskById(Integer id) {
@@ -67,11 +73,11 @@ public class Manager {
     }
 
     void removeSubtaskById(Integer id) {
-        Subtask currentSubtask = getSubtaskById(id); // находим подзадачу
-        Epic currentEpic = getEpicById(currentSubtask.getEpicId()); // находим эпик этой подзадачи в epicMap
-        currentEpic.getSubtasks().remove(currentSubtask);// удаляем в эту подзадачу из списка подзада эпика
-        currentEpic.updateStatus(); // обновляем статус эпика
-        subtaskMap.remove(currentSubtask.getId()); // удаляем подзадачу из subtaskMap
+        Subtask currentSubtask = getSubtaskById(id);
+        Epic currentEpic = getEpicById(currentSubtask.getEpicId());
+        currentEpic.getSubtasks().remove(currentSubtask);
+        currentEpic.updateStatus();
+        subtaskMap.remove(currentSubtask.getId());
     }
 
     void removeEpicById(Integer id) {
