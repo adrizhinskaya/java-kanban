@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> subtasks = new ArrayList<>();
+    private final ArrayList<Subtask> subtasks = new ArrayList<>();
 
     public Epic(String name, String description) {
         super(name, description, Status.NEW);
@@ -25,9 +25,9 @@ public class Epic extends Task {
             return Status.NEW;
         }
 
-        boolean isStatucesEqual = containsEqualValues();
+        boolean isStatusesEqual = subtasksHaveSameStatuses();
 
-        if (isStatucesEqual) {
+        if (isStatusesEqual) {
             Status status = subtasks.get(0).getStatus();
             switch (status) {
                 case NEW:
@@ -41,7 +41,7 @@ public class Epic extends Task {
         return Status.IN_PROGRESS;
     }
 
-    private boolean containsEqualValues() {
+    private boolean subtasksHaveSameStatuses() {
         Status status = subtasks.get(0).getStatus();
         for (int i = 1; i < subtasks.size(); i++) {
             if (!status.equals(subtasks.get(i).getStatus())) {
