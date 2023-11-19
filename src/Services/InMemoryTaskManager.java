@@ -14,11 +14,10 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Subtask> subtaskMap;
     private final HistoryManager historyManager;
 
-    public InMemoryTaskManager(HashMap<Integer, Task> taskMap, HashMap<Integer, Epic> epicMap, HashMap<Integer,
-            Subtask> subtaskMap, HistoryManager historyManager) {
-        this.taskMap = taskMap;
-        this.epicMap = epicMap;
-        this.subtaskMap = subtaskMap;
+    public InMemoryTaskManager(HistoryManager historyManager) {
+        this.taskMap = new HashMap<>();
+        this.epicMap = new HashMap<>();
+        this.subtaskMap = new HashMap<>();
         this.historyManager = historyManager;
     }
 

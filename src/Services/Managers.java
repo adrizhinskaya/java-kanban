@@ -1,10 +1,11 @@
 package Services;
 
+
 import java.util.HashMap;
 
 public class Managers {
     public static TaskManager getDefault() {
-        return new InMemoryTaskManager(new HashMap<>(), new HashMap<>(), new HashMap<>(), getDefaultHistory());
+        return new InMemoryTaskManager(getDefaultHistory());
     }
 
     static HistoryManager getDefaultHistory() {
