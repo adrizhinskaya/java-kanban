@@ -1,12 +1,26 @@
+package Services;
+
+import Models.Epic;
+import Models.Subtask;
+import Models.Task;
+
 import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private Integer id = 0;
-    private final HashMap<Integer, Task> taskMap = new HashMap<>();
-    private final HashMap<Integer, Epic> epicMap = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtaskMap = new HashMap<>();
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    private final HashMap<Integer, Task> taskMap;
+    private final HashMap<Integer, Epic> epicMap;
+    private final HashMap<Integer, Subtask> subtaskMap;
+    private final HistoryManager historyManager;
+
+    public InMemoryTaskManager(HashMap<Integer, Task> taskMap, HashMap<Integer, Epic> epicMap, HashMap<Integer,
+            Subtask> subtaskMap, HistoryManager historyManager) {
+        this.taskMap = taskMap;
+        this.epicMap = epicMap;
+        this.subtaskMap = subtaskMap;
+        this.historyManager = historyManager;
+    }
 
     @Override
     public HashMap<Integer, Task> getAllTasks() {

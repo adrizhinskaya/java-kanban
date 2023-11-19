@@ -1,3 +1,6 @@
+package Services;
+
+import Models.Task;
 import java.util.List;
 
 public interface HistoryManager {

@@ -1,3 +1,5 @@
+package Models;
+
 public enum Status {
     NEW,
     IN_PROGRESS,

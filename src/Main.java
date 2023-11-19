@@ -1,3 +1,10 @@
+import Models.Epic;
+import Models.Status;
+import Models.Subtask;
+import Models.Task;
+import Services.Managers;
+import Services.TaskManager;
+
 import java.util.HashMap;
 
 public class Main {
@@ -41,11 +48,11 @@ public class Main {
 //        showAllTasks();
 //        System.out.println("________________________");
 //
-//        task1.setStatus(Status.IN_PROGRESS);
-//        task2.setStatus(Status.DONE);
-//        subtask1.setStatus(Status.IN_PROGRESS);
-//        subtask2.setStatus(Status.DONE);
-//        subtask3.setStatus(Status.DONE);
+//        task1.setStatus(Models.Status.IN_PROGRESS);
+//        task2.setStatus(Models.Status.DONE);
+//        subtask1.setStatus(Models.Status.IN_PROGRESS);
+//        subtask2.setStatus(Models.Status.DONE);
+//        subtask3.setStatus(Models.Status.DONE);
 //
 //        inMemoryTaskManager.updateTask(task1);
 //        inMemoryTaskManager.updateTask(task2);
@@ -74,7 +81,7 @@ public class Main {
         System.out.println("\u001B[31m" + "TASKS" + "\u001B[0m");
         for (Task task : taskHashMap.values()) {
             System.out.println("Id - " + task.getId() + ", Name - " + task.getName() + ", Description - "
-                    + task.getDescription() + ", Status - " + task.getStatus());
+                    + task.getDescription() + ", Models.Status - " + task.getStatus());
         }
     }
 
@@ -82,7 +89,7 @@ public class Main {
         System.out.println("\u001B[31m" + "SUBTASKS" + "\u001B[0m");
         for (Subtask subtask : subtaskHashMap.values()) {
             System.out.println("Id - " + subtask.getId() + " Name - " + subtask.getName() + ", Description - "
-                    + subtask.getDescription() + ", Status - " + subtask.getStatus() + ", Epic - "
+                    + subtask.getDescription() + ", Models.Status - " + subtask.getStatus() + ", Models.Epic - "
                     + inMemoryTaskManager.getEpicById(subtask.getEpicId()).getName());
         }
     }
@@ -91,11 +98,11 @@ public class Main {
         System.out.println("\u001B[31m" + "EPICS" + "\u001B[0m");
         for (Epic epic : epicHashMap.values()) {
             System.out.println("Id - " + epic.getId() + ", Name - " + epic.getName() + ", Description - "
-                    + epic.getDescription() + ", Status - " + epic.getStatus());
-            System.out.println(" Epic Subtasks:");
+                    + epic.getDescription() + ", Models.Status - " + epic.getStatus());
+            System.out.println(" Models.Epic Subtasks:");
             for (Subtask subtask : epic.getSubtasks()) {
                 System.out.println(" Id - " + subtask.getId() + ", Name - " + subtask.getName() + ", Description - "
-                        + subtask.getDescription() + ", Status - " + subtask.getStatus() + ", Epic - "
+                        + subtask.getDescription() + ", Models.Status - " + subtask.getStatus() + ", Models.Epic - "
                         + inMemoryTaskManager.getEpicById(subtask.getEpicId()).getName());
             }
             System.out.println();

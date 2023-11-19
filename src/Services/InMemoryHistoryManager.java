@@ -1,12 +1,17 @@
-import java.util.ArrayList;
+package Services;
+
+import Models.Task;
+
+import java.util.LinkedList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final List<Task> viewedTasks = new ArrayList<>(10);
+    final byte VIEWED_TASKS_CAPACITY = 10;
+    private final List<Task> viewedTasks = new LinkedList<>();
 
     @Override
     public void add(Task task) {
-        if(viewedTasks.size() >= 10) {
+        if (viewedTasks.size() >= VIEWED_TASKS_CAPACITY) {
             viewedTasks.remove(0);
         }
         viewedTasks.add(task);
