@@ -6,6 +6,7 @@ import Services.Managers;
 import Services.TaskManager;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class Main {
     static TaskManager inMemoryTaskManager = Managers.getDefault();
@@ -28,20 +29,28 @@ public class Main {
         inMemoryTaskManager.createSubtask(subtask2);
         inMemoryTaskManager.createSubtask(subtask3);
 
-        inMemoryTaskManager.getTaskById(task1.getId());
+        inMemoryTaskManager.getTaskById(task2.getId());
         inMemoryTaskManager.getTaskById(task2.getId());
         inMemoryTaskManager.getEpicById(epic1.getId());
         inMemoryTaskManager.getEpicById(epic2.getId());
+        inMemoryTaskManager.getTaskById(task1.getId());
         inMemoryTaskManager.getSubtaskById(subtask1.getId());
         inMemoryTaskManager.getSubtaskById(subtask2.getId());
+        inMemoryTaskManager.getTaskById(task1.getId());
+
         inMemoryTaskManager.getSubtaskById(subtask3.getId());
         inMemoryTaskManager.getSubtaskById(subtask3.getId());
         inMemoryTaskManager.getSubtaskById(subtask3.getId());
         inMemoryTaskManager.getSubtaskById(subtask3.getId());
         inMemoryTaskManager.getSubtaskById(subtask3.getId());
 
-        for(Task t : inMemoryTaskManager.getHistory()) {
-            System.out.println(t.getName());
+        List<Task> historyList = inMemoryTaskManager.getHistory();
+        if(historyList != null) {
+            for (Task t : historyList) {
+                System.out.println(t.getName());
+            }
+        } else {
+            System.out.println("Список пуст");
         }
 
 
