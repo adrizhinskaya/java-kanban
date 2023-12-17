@@ -10,17 +10,13 @@ import java.util.Map;
 
 
 public class InMemoryHistoryManager implements HistoryManager {
-    final byte VIEWED_TASKS_CAPACITY = 10;
     private final CustomLinkedList<Task> viewedTasks = new CustomLinkedList<>();
     Map<Integer, Node<Task>> viewedTasksMap = new HashMap<>();
 
     @Override
     public void add(Task task) {
-        if (viewedTasks.size() >= VIEWED_TASKS_CAPACITY) {
+        if (viewedTasksMap.containsKey(task.getId())) {
             remove(task.getId());
-        } else if (viewedTasksMap.containsKey(task.getId())) {
-            remove(task.getId());
-            //viewedTasksMap.remove(task.getId());
         }
         viewedTasks.linkLast(task);
         viewedTasksMap.put(task.getId(), viewedTasks.tail);
@@ -29,7 +25,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void remove(int id) {
         Node<Task> nodeToDelete = viewedTasksMap.get(id);
-        viewedTasks.removeNode(nodeToDelete);
+        if(nodeToDelete != null) {
+            viewedTasks.removeNode(nodeToDelete);
+        }
     }
 
     @Override
@@ -46,16 +44,17 @@ public class InMemoryHistoryManager implements HistoryManager {
             final Node<T> oldTail = tail;
             final Node<T> newNode = new Node<>(oldTail, task, null);
             tail = newNode;
-            if (oldTail == null)
+            if (oldTail == null) {
                 head = newNode;
-            else
+            } else {
                 oldTail.next = newNode;
+            }
             size++;
         }
 
         void removeFirst() {
             Node<T> nextHead = head.next;
-            if(nextHead != null) {
+            if (nextHead != null) {
                 nextHead.prev = null;
                 head.next = null;
                 head = nextHead;
@@ -90,13 +89,13 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
         }
 
-        ArrayList<T> getTasks() {
+        List<T> getTasks() {
             ArrayList<T> tasksList = new ArrayList<>();
-            if(head == null) {
-                return null;
+            if (head == null) {
+                return tasksList;
             }
             Node<T> currentNode = head;
-            for (int i = 1; i <= size(); i++) {
+            while (currentNode != null) {
                 tasksList.add(currentNode.data);
                 currentNode = currentNode.next;
             }

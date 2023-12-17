@@ -99,39 +99,54 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeTaskById(Integer id) {
-        taskMap.remove(getTaskById(id).getId());
+        taskMap.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
     public void removeSubtaskById(Integer id) {
-        Subtask currentSubtask = getSubtaskById(id);
-        Epic currentEpic = getEpicById(currentSubtask.getEpicId());
+        Subtask currentSubtask = subtaskMap.get(id);
+        Epic currentEpic = epicMap.get(currentSubtask.getEpicId());
         currentEpic.getSubtasks().remove(currentSubtask);
         currentEpic.updateStatus();
         subtaskMap.remove(currentSubtask.getId());
+        historyManager.remove(id);
     }
 
     @Override
     public void removeEpicById(Integer id) {
-        Epic currentEpic = getEpicById(id);
-        for (Subtask s : subtaskMap.values()) {
-            if (s.getEpicId().equals(id)) {
-                subtaskMap.remove(s.getId());
-            }
-        }
+        Epic currentEpic = epicMap.get(id);
+        subtaskMap.values().removeIf(s -> s.getEpicId().equals(id)); // ChatGPT и IntelliSense помогли заменить этой
+        // строчкой код ниже (удаление элементов хэш-таблицы в процессе итерации).
+        // Это верное решение с точки зрения логики работы?
+
+//        Epic currentEpic = epicMap.get(id);
+//        for (Subtask s : subtaskMap.values()) {
+//            if (s.getEpicId().equals(id)) {
+//                subtaskMap.remove(s.getId());
+//            }
+//        }
         epicMap.remove(currentEpic.getId());
+
+        for (Subtask s : currentEpic.getSubtasks()){
+            historyManager.remove(s.getId());
+        }
+        historyManager.remove(id);
     }
 
     @Override
     public void removeAllTasks() {
-        taskMap.clear();
+        taskMap.values().forEach(task -> removeTaskById(task.getId()));
+        for(Task t : taskMap.values()) {
+            removeTaskById(t.getId());
+        }
     }
 
     @Override
     public void removeAllSubtasks() {
         for (Epic epic : epicMap.values()) {
+            epic.getSubtasks().forEach(subtask -> historyManager.remove(subtask.getId()));
             epic.getSubtasks().clear();
-            epic.updateStatus();
         }
         subtaskMap.clear();
     }
@@ -139,6 +154,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeAllEpics() {
         removeAllSubtasks();
+        for(Epic epic : epicMap.values()) {
+            historyManager.remove(epic.getId());
+        }
         epicMap.clear();
     }
 

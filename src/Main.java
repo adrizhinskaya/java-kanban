@@ -37,12 +37,13 @@ public class Main {
         inMemoryTaskManager.getSubtaskById(subtask1.getId());
         inMemoryTaskManager.getSubtaskById(subtask2.getId());
         inMemoryTaskManager.getTaskById(task1.getId());
+        inMemoryTaskManager.getSubtaskById(subtask3.getId());
+        inMemoryTaskManager.getSubtaskById(subtask3.getId());
+        inMemoryTaskManager.getSubtaskById(subtask3.getId());
+        inMemoryTaskManager.getSubtaskById(subtask3.getId());
+        inMemoryTaskManager.getSubtaskById(subtask3.getId());
 
-        inMemoryTaskManager.getSubtaskById(subtask3.getId());
-        inMemoryTaskManager.getSubtaskById(subtask3.getId());
-        inMemoryTaskManager.getSubtaskById(subtask3.getId());
-        inMemoryTaskManager.getSubtaskById(subtask3.getId());
-        inMemoryTaskManager.getSubtaskById(subtask3.getId());
+        inMemoryTaskManager.removeAllEpics();
 
         List<Task> historyList = inMemoryTaskManager.getHistory();
         if(historyList != null) {
