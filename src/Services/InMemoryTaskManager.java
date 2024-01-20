@@ -9,10 +9,10 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private Integer id = 0;
-    private final HashMap<Integer, Task> taskMap;
-    private final HashMap<Integer, Epic> epicMap;
-    private final HashMap<Integer, Subtask> subtaskMap;
-    private final HistoryManager historyManager;
+    protected final HashMap<Integer, Task> taskMap;
+    protected final HashMap<Integer, Epic> epicMap;
+    protected final HashMap<Integer, Subtask> subtaskMap;
+    protected final HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.taskMap = new HashMap<>();
@@ -34,6 +34,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public HashMap<Integer, Epic> getAllEpics() {
         return epicMap;
+    }
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
     }
 
     @Override
@@ -116,16 +120,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeEpicById(Integer id) {
         Epic currentEpic = epicMap.get(id);
-        subtaskMap.values().removeIf(s -> s.getEpicId().equals(id)); // ChatGPT и IntelliSense помогли заменить этой
-        // строчкой код ниже (удаление элементов хэш-таблицы в процессе итерации).
-        // Это верное решение с точки зрения логики работы?
-
-//        Epic currentEpic = epicMap.get(id);
-//        for (Subtask s : subtaskMap.values()) {
-//            if (s.getEpicId().equals(id)) {
-//                subtaskMap.remove(s.getId());
-//            }
-//        }
+        subtaskMap.values().removeIf(s -> s.getEpicId().equals(id));
         epicMap.remove(currentEpic.getId());
 
         for (Subtask s : currentEpic.getSubtasks()){
@@ -159,11 +154,6 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.remove(epic.getId());
         }
         epicMap.clear();
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return historyManager.getHistory();
     }
 
     Integer generateId() {
