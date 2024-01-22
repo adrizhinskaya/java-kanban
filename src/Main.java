@@ -45,7 +45,7 @@ public class Main {
         fileBackedTasksManager.getSubtaskById(subtask3.getId());
         fileBackedTasksManager.getSubtaskById(subtask3.getId());
 
-        fileBackedTasksManager.removeAllEpics();
+        //fileBackedTasksManager.removeAllEpics();
 
         TaskManager fileBackedTasksManager2 = Managers.getTaskManagerFromFile(new File("src\\Autosave\\autosave_data.csv"));
 

@@ -11,7 +11,7 @@ public class Managers {
     }
 
     public static TaskManager getTaskManagerFromFile(File file) {
-        return FileBackedTasksManager.loadFromFile(file);
+        return FileBackedTasksManager.loadFromFile(getDefaultHistory(), file);
     }
 
     static HistoryManager getDefaultHistory() {
