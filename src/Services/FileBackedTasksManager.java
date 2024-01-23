@@ -7,10 +7,7 @@ import javax.management.modelmbean.InvalidTargetObjectTypeException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,7 +38,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(filePath)))) {
             bufferedWriter.write("id,type,name,status,description,epic\n");
-            for (Task task : Stream.concat(getAllTasks().values().stream(), Stream.concat(getAllEpics().values().stream(), getAllSubtasks().values().stream())).collect(Collectors.toList())) {
+            for (Task task : Stream.concat(getAllTasks().values().stream(),
+                    Stream.concat(getAllEpics().values().stream(),
+                            getAllSubtasks().values().stream()))
+                    .collect(Collectors.toList())) {
                 bufferedWriter.write(toString(task) + "\n");
             }
             bufferedWriter.newLine();
@@ -85,6 +85,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 if (!line.isBlank()) {
                     putTaskToMap(fromString(line), fileBackedTasksManager);
                 } else {
+                    distributeSubtasksToEpics(fileBackedTasksManager);
+                    setIdGenerator(fileBackedTasksManager);
                     fillHistoryManager(historyFromString(bufferedReader.readLine()), fileBackedTasksManager,
                             historyManager);
                 }
@@ -94,6 +96,22 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             throw new RuntimeException(e);
         } catch (InvalidTargetObjectTypeException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void setIdGenerator(FileBackedTasksManager fileBackedTasksManager) {
+        List<Task> taskList = Stream.concat(fileBackedTasksManager.taskMap.values().stream(),
+                        Stream.concat(fileBackedTasksManager.epicMap.values().stream(),
+                                fileBackedTasksManager.subtaskMap.values().stream())).collect(Collectors.toList());
+
+        fileBackedTasksManager.id = taskList.stream()
+                .max(Comparator.comparingInt(Task::getId))
+                .get().getId();
+    }
+
+    public static void distributeSubtasksToEpics(FileBackedTasksManager fileBackedTasksManager) {
+        for(Subtask s : fileBackedTasksManager.subtaskMap.values()) {
+            fileBackedTasksManager.epicMap.get(s.getEpicId()).addSubtask(s);
         }
     }
 
@@ -114,11 +132,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             case EPIC:
                 Epic epic = new Epic(taskChars[2], taskChars[4]);
                 epic.setId(Integer.parseInt(taskChars[0]));
-                return epic; // "Эпик также должен получить коллекцию подзадач, рекомендую реализовать это,
-                             //  пройдясь после парсинга файла по всем считанным подзадачам и раскидав их
-                             //  по своим эпикам"
-
-                             //  Подзадачи добавляются в эпик в методе putTaskToMap()на 140 строке.
+                return epic;
             default:
                 throw new InvalidTargetObjectTypeException(value);
         }
@@ -138,12 +152,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             fileBackedTasksManager.epicMap.put(task.getId(), (Epic) task);
         } else if (task instanceof Subtask) {
             Subtask subtask = (Subtask) task;
-            fileBackedTasksManager.epicMap.get(subtask.getEpicId()).addSubtask(subtask);
             fileBackedTasksManager.subtaskMap.put(subtask.getId(), subtask);
         } else if (task instanceof Task) {
             fileBackedTasksManager.taskMap.put(task.getId(), task);
         }
-        fileBackedTasksManager.generateId();
     }
 
     public static void fillHistoryManager(List<Integer> historyIDs, FileBackedTasksManager fileBackedTasksManager,
