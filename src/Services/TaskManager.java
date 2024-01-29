@@ -6,6 +6,7 @@ import Models.Task;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
 
@@ -46,4 +47,6 @@ public interface TaskManager {
     void removeAllEpics();
 
     List<Task> getHistory();
+
+    public Set<Task> getPrioritizedTasks();
 }

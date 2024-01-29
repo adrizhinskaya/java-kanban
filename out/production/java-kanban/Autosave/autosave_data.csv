@@ -1,5 +1,6 @@
-id,type,name,status,description,epic
-1,TASK,Task1,NEW,Описание Task1,
-2,TASK,Task2,NEW,Описание Task2,
+id,type,name,status,description,startTime,duration,endTime,epic
+1,TASK,Task Name,NEW,Task Description,2024-02-02T00:00,60,2024-02-02T01:00,
+2,EPIC,Epic Name,NEW,Epic Description,2024-03-03T00:00,120,2024-03-03T02:00,
+3,SUBTASK,Subtask Name,NEW,Subtask Description,2024-03-03T00:00,120,2024-03-03T02:00,2
 
-2,1
+2

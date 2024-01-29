@@ -2,20 +2,21 @@ import Models.Epic;
 import Models.Status;
 import Models.Subtask;
 import Models.Task;
-import Services.FileBackedTasksManager;
 import Services.Managers;
 import Services.TaskManager;
 
 import java.io.File;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 
 public class Main {
     static TaskManager fileBackedTasksManager = Managers.getFileBackedTaskManager();
+
     public static void main(String[] args) {
 
-        Task task1 = new Task("Task1", "Описание Task1", Status.NEW);
-        Task task2 = new Task("Task2", "Описание Task2", Status.NEW);
+        Task task1 = new Task("Task1", "Описание Task1", Status.NEW, LocalDateTime.of(2021, 1, 1, 0, 0), Duration.ofMinutes(60));
+        Task task2 = new Task("Task2", "Описание Task2", Status.NEW, LocalDateTime.of(2022, 2, 2, 0, 0), Duration.ofMinutes(120));
         fileBackedTasksManager.createTask(task1);
         fileBackedTasksManager.createTask(task2);
 
@@ -24,14 +25,19 @@ public class Main {
         fileBackedTasksManager.createEpic(epic1);
         fileBackedTasksManager.createEpic(epic2);
 
-        Subtask subtask1 = new Subtask("Subtask1", "Описание Subtask1", Status.DONE, epic1.getId());
-        Subtask subtask2 = new Subtask("Subtask2", "Описание Subtask2", Status.NEW, epic1.getId());
-        Subtask subtask3 = new Subtask("Subtask3", "Описание Subtask3", Status.IN_PROGRESS, epic2.getId());
+        Subtask subtask1 = new Subtask("Subtask1", "Описание Subtask1", Status.DONE, epic1.getId(), LocalDateTime.of(1991, 1, 1, 0, 0), Duration.ofMinutes(60));
+        Subtask subtask2 = new Subtask("Subtask2", "Описание Subtask2", Status.NEW, epic1.getId(), LocalDateTime.of(1992, 2, 2, 0, 0), Duration.ofMinutes(120));
+        Subtask subtask3 = new Subtask("Subtask3", "Описание Subtask3", Status.IN_PROGRESS, epic2.getId(), LocalDateTime.of(1993, 3, 3, 0, 0), Duration.ofMinutes(180));
         fileBackedTasksManager.createSubtask(subtask1);
         fileBackedTasksManager.createSubtask(subtask2);
         fileBackedTasksManager.createSubtask(subtask3);
 
-        fileBackedTasksManager.getTaskById(task2.getId());
+//        Set<Task> tasks = fileBackedTasksManager.getPrioritizedTasks();
+//        for(Task t : tasks) {
+//            System.out.println(t.getName() + " " + t.getStartTime());
+//        }
+
+//        fileBackedTasksManager.getTaskById(task2.getId());
         fileBackedTasksManager.getTaskById(task2.getId());
         fileBackedTasksManager.getEpicById(epic1.getId());
         fileBackedTasksManager.getEpicById(epic2.getId());
@@ -44,11 +50,11 @@ public class Main {
         fileBackedTasksManager.getSubtaskById(subtask3.getId());
         fileBackedTasksManager.getSubtaskById(subtask3.getId());
         fileBackedTasksManager.getSubtaskById(subtask3.getId());
-
-        //fileBackedTasksManager.removeAllSubtasks();
-        fileBackedTasksManager.removeAllTasks();
-        //fileBackedTasksManager.removeAllEpics();
-
+//
+//        //fileBackedTasksManager.removeAllSubtasks();
+//        fileBackedTasksManager.removeAllTasks();
+//        //fileBackedTasksManager.removeAllEpics();
+//
         TaskManager fileBackedTasksManager2 = Managers.getTaskManagerFromFile(
                 new File("src\\Autosave\\autosave_data.csv"));
 
