@@ -11,6 +11,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Task> taskMap;
     protected final HashMap<Integer, Epic> epicMap;
     protected final HashMap<Integer, Subtask> subtaskMap;
+    Set<Task> tickets = new TreeSet<>(Task::compareByStartTime);
     protected final HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
@@ -18,6 +19,7 @@ public class InMemoryTaskManager implements TaskManager {
         this.epicMap = new HashMap<>();
         this.subtaskMap = new HashMap<>();
         this.historyManager = historyManager;
+        getPrioritizedTasks();
     }
 
     @Override
@@ -203,7 +205,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Set<Task> getPrioritizedTasks() {
-        Set<Task> tickets = new TreeSet<>(Task::compareByStartTime);
         tickets.addAll(taskMap.values());
         tickets.addAll(subtaskMap.values());
         return tickets;

@@ -36,6 +36,9 @@ public class Task {
     }
 
     public void setDuration(Duration duration) {
+        if (duration.isNegative()) {
+            throw new IllegalArgumentException("Duration не может быть отрицательным значением");
+        }
         this.duration = duration;
     }
 
@@ -68,6 +71,9 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
+        if(startTime == null) {
+            throw new IllegalArgumentException("Введите значение startTime");
+        }
         return startTime.plus(duration);
     }
 
