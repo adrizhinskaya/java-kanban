@@ -40,7 +40,7 @@ public class Main {
         fileBackedTasksManager.createSubtask(subtask2);
         fileBackedTasksManager.createSubtask(subtask3);
 
-        fileBackedTasksManager.removeAllSubtasks();
+        //fileBackedTasksManager.removeEpicById(epic1.getId());
 
         Set<Task> tasks = fileBackedTasksManager.getPrioritizedTasks();
         for(Task t : tasks) {

@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class HistoryManagerTest {
-    HistoryManager _historyManager;
+    HistoryManager historyManager;
     static Task task1;
     static Task task2;
     static Task task3;
@@ -37,35 +37,35 @@ class HistoryManagerTest {
 
     @BeforeEach
     public void createTaskManager() {
-        _historyManager = new InMemoryHistoryManager();
+        historyManager = new InMemoryHistoryManager();
     }
 
     @Test
     public void shouldReturnEmptyListForNoActions() {
-        List<Task> history = _historyManager.getHistory();
+        List<Task> history = historyManager.getHistory();
         assertNotNull(history, "История не пустая");
         assertEquals(0, history.size(), "История не пустая");
     }
 
     @Test
     public void shouldFillHistoryAfterAdding() {
-        _historyManager.add(task1);
-        List<Task> historyWith1Elem = _historyManager.getHistory();
+        historyManager.add(task1);
+        List<Task> historyWith1Elem = historyManager.getHistory();
         assertEquals(1, historyWith1Elem.size(), "Просмотр не добавлен в историю");
         assertEquals(task1, historyWith1Elem.get(0), "Некорректная работа добавления просмотров в историю");
 
-        _historyManager.add(task2);
-        List<Task> historyWith2Elem = _historyManager.getHistory();
+        historyManager.add(task2);
+        List<Task> historyWith2Elem = historyManager.getHistory();
         assertEquals(2, historyWith2Elem.size(), "Просмотр не добавлен в историю");
         assertEquals(task2, historyWith2Elem.get(1), "Некорректная работа добавления просмотров в историю");
     }
 
     @Test
     public void shouldReplaceEqualTaskInHistoryAfterAdding() {
-        _historyManager.add(task1);
-        _historyManager.add(task2);
-        _historyManager.add(task1);
-        List<Task> history = _historyManager.getHistory();
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task1);
+        List<Task> history = historyManager.getHistory();
         assertEquals(2, history.size(), "Неверный размер истории после добавления дубликата");
         assertEquals(task2, history.get(0), "Некорректное расположение элементов в истории после добавления " +
                 "дубликата");
@@ -73,12 +73,12 @@ class HistoryManagerTest {
 
     @Test
     public void shouldRemoveFirstArgumentInHistory() {
-        _historyManager.add(task1);
-        _historyManager.add(task2);
-        _historyManager.add(task3);
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
 
-        _historyManager.remove(task1.getId());
-        List<Task> history = _historyManager.getHistory();
+        historyManager.remove(task1.getId());
+        List<Task> history = historyManager.getHistory();
         assertEquals(2, history.size(), "Неверный размер истории после удаления элемента");
         assertEquals(task2, history.get(0), "Некорректное расположение элементов в истории после удаления " +
                 "элемента");
@@ -86,12 +86,12 @@ class HistoryManagerTest {
 
     @Test
     public void shouldRemoveLastArgumentInHistory() {
-        _historyManager.add(task1);
-        _historyManager.add(task2);
-        _historyManager.add(task3);
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
 
-        _historyManager.remove(task3.getId());
-        List<Task> history = _historyManager.getHistory();
+        historyManager.remove(task3.getId());
+        List<Task> history = historyManager.getHistory();
         assertEquals(2, history.size(), "Неверный размер истории после удаления элемента");
         assertEquals(task2, history.get(1), "Некорректное расположение элементов в истории после удаления " +
                 "элемента");
@@ -99,12 +99,12 @@ class HistoryManagerTest {
 
     @Test
     public void shouldRemoveMiddleArgumentInHistory() {
-        _historyManager.add(task1);
-        _historyManager.add(task2);
-        _historyManager.add(task3);
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.add(task3);
 
-        _historyManager.remove(task2.getId());
-        List<Task> history = _historyManager.getHistory();
+        historyManager.remove(task2.getId());
+        List<Task> history = historyManager.getHistory();
         assertEquals(2, history.size(), "Неверный размер истории после удаления элемента");
         assertEquals(task3, history.get(1), "Некорректное расположение элементов в истории после удаления " +
                 "элемента");

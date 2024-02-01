@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FileBackedTasksManagerTest {
-    TaskManager _fileTaskManager;
+    TaskManager fileTaskManager;
     LocalDateTime localDateTimeNow = LocalDateTime.now();
     LocalDateTime startTime1 = LocalDateTime.of(2024, 2, 2, 0, 0);
     LocalDateTime startTime2 = LocalDateTime.of(2024, 3, 3, 0, 0);
@@ -24,7 +24,7 @@ class FileBackedTasksManagerTest {
 
     @BeforeEach
     public void createFileBackTaskManager() {
-        _fileTaskManager = new FileBackedTasksManager(new InMemoryHistoryManager(), "autosave_data.csv");
+        fileTaskManager = new FileBackedTasksManager(new InMemoryHistoryManager(), "autosave_data.csv");
     }
 
     public TaskManager createBackedTaskManagerFromFile() {
@@ -33,26 +33,26 @@ class FileBackedTasksManagerTest {
 
     public Task createTaskInTaskManagerAndReturn() {
         Task task = new Task("Task Name", "Task Description", Status.NEW, startTime1, duration1);
-        _fileTaskManager.createTask(task);
+        fileTaskManager.createTask(task);
         return task;
     }
 
     public Subtask createSubtaskInTaskManagerAndReturn(Integer epicId) {
         Subtask subtask = new Subtask("Subtask Name", "Subtask Description", Status.NEW, epicId,
                 startTime2, duration2);
-        _fileTaskManager.createSubtask(subtask);
+        fileTaskManager.createSubtask(subtask);
         return subtask;
     }
 
     public Epic createEpicInTaskManagerAndReturn() {
         Epic epic = new Epic("Epic Name", "Epic Description");
-        _fileTaskManager.createEpic(epic);
+        fileTaskManager.createEpic(epic);
         return epic;
     }
 
     @Test
     public void shouldReturnEmptyHistoryAndNoDataAfterDeleting() {
-        _fileTaskManager.removeAllTasks();
+        fileTaskManager.removeAllTasks();
         TaskManager resultBTM = createBackedTaskManagerFromFile();
         assertEquals(0, resultBTM.getAllTasks().size());
         assertEquals(0, resultBTM.getAllSubtasks().size());
@@ -80,8 +80,8 @@ class FileBackedTasksManagerTest {
     public void shouldReturnHistoryAndDataAfterCreating() {
         Task task = createTaskInTaskManagerAndReturn();
         Epic epic = createEpicInTaskManagerAndReturn();
-        _fileTaskManager.getTaskById(task.getId());
-        _fileTaskManager.getEpicById(epic.getId());
+        fileTaskManager.getTaskById(task.getId());
+        fileTaskManager.getEpicById(epic.getId());
 
         TaskManager resultBTM = createBackedTaskManagerFromFile();
         assertEquals(1, resultBTM.getAllTasks().size());

@@ -103,9 +103,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 distributeSubtasksToEpics(fileBackedTasksManager);
                 setIdGenerator(fileBackedTasksManager);
                 fillHistoryManager(historyFromString(bufferedReader.readLine()), fileBackedTasksManager, historyManager);
+                fillPrioritizedTasks(fileBackedTasksManager);
                 return fileBackedTasksManager;
             }
             distributeSubtasksToEpics(fileBackedTasksManager);
+            fillPrioritizedTasks(fileBackedTasksManager);
             setIdGenerator(fileBackedTasksManager);
             return fileBackedTasksManager;
         } catch (IOException e) {
@@ -189,6 +191,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         fileBackedTasksManager.epicMap.get(id)))
                 .filter(Objects::nonNull)
                 .forEach(historyManager::add);
+    }
+
+    private static void fillPrioritizedTasks(FileBackedTasksManager fileBackedTasksManager) {
+        fileBackedTasksManager.prioritizedTasks.addAll(
+                Stream.of(fileBackedTasksManager.taskMap.values(), fileBackedTasksManager.subtaskMap.values())
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toSet())
+        );
     }
 
     @Override

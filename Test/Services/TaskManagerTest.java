@@ -16,58 +16,56 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TaskManagerTest {
-    TaskManager _taskManager;
-    LocalDateTime startTime0 = LocalDateTime.of(2024, 1, 1, 0, 0);
+    TaskManager taskManager;
     LocalDateTime startTime1 = LocalDateTime.of(2024, 2, 2, 0, 0);
     LocalDateTime startTime2 = LocalDateTime.of(2024, 3, 3, 0, 0);
     Duration duration1 = Duration.ofMinutes(60);
     Duration duration2 = Duration.ofMinutes(120);
-    LocalDateTime endTime2 = startTime2.plus(duration2);
 
     @BeforeEach
     public void createTaskManager() {
-        _taskManager = Managers.getDefault();
+        taskManager = Managers.getDefault();
     }
 
     public Task createTaskInTaskManagerAndReturn() {
         Task task = new Task("Task Name", "Task Description", Status.NEW, startTime1, duration1);
-        _taskManager.createTask(task);
+        taskManager.createTask(task);
         return task;
     }
 
     public Subtask createSubtaskInTaskManagerAndReturn(Integer epicId) {
         Subtask subtask = new Subtask("Subtask Name", "Subtask Description", Status.NEW, epicId,
                 startTime2, duration2);
-        _taskManager.createSubtask(subtask);
+        taskManager.createSubtask(subtask);
         return subtask;
     }
 
     public Epic createEpicInTaskManagerAndReturn() {
         Epic epic = new Epic("Epic Name", "Epic Description");
-        _taskManager.createEpic(epic);
+        taskManager.createEpic(epic);
         return epic;
     }
 
     @Test
     void getAllTasks() {
-        assertEquals(0, _taskManager.getAllTasks().size(), "taskMap не пустая");
+        assertEquals(0, taskManager.getAllTasks().size(), "taskMap не пустая");
         Task task = createTaskInTaskManagerAndReturn();
-        assertEquals(1, _taskManager.getAllTasks().size(), "taskMap не заполняется");
+        assertEquals(1, taskManager.getAllTasks().size(), "taskMap не заполняется");
     }
 
     @Test
     void getAllSubtasks() {
-        assertEquals(0, _taskManager.getAllSubtasks().size(), "subtaskMap не пустая");
+        assertEquals(0, taskManager.getAllSubtasks().size(), "subtaskMap не пустая");
         Epic epic = createEpicInTaskManagerAndReturn();
         Subtask subtask = createSubtaskInTaskManagerAndReturn(epic.getId());
-        assertEquals(1, _taskManager.getAllSubtasks().size(), "subtaskMap не заполняется");
+        assertEquals(1, taskManager.getAllSubtasks().size(), "subtaskMap не заполняется");
     }
 
     @Test
     void getAllEpics() {
-        assertEquals(0, _taskManager.getAllEpics().size(), "epicMap не пустая");
+        assertEquals(0, taskManager.getAllEpics().size(), "epicMap не пустая");
         Epic epic = createEpicInTaskManagerAndReturn();
-        assertEquals(1, _taskManager.getAllEpics().size(), "epicMap не заполняется");
+        assertEquals(1, taskManager.getAllEpics().size(), "epicMap не заполняется");
     }
 
     @Test
@@ -75,11 +73,11 @@ class TaskManagerTest {
         final NoSuchElementException exception = assertThrows(
                 NoSuchElementException.class,
                 () -> {
-                    _taskManager.getTaskById(0);
+                    taskManager.getTaskById(0);
                 }, "Нет исключения на несуществующий id");
         assertEquals("Элемента с id " + 0 + "не существует", exception.getMessage());
         Task task = createTaskInTaskManagerAndReturn();
-        assertEquals(task, _taskManager.getTaskById(task.getId()), "Не возвращается существующая задача");
+        assertEquals(task, taskManager.getTaskById(task.getId()), "Не возвращается существующая задача");
     }
 
     @Test
@@ -87,13 +85,13 @@ class TaskManagerTest {
         final NoSuchElementException exception = assertThrows(
                 NoSuchElementException.class,
                 () -> {
-                    _taskManager.getSubtaskById(0);
+                    taskManager.getSubtaskById(0);
                 }, "Нет исключения на несуществующий id");
 
         assertEquals("Элемента с id " + 0 + "не существует", exception.getMessage());
         Epic epic = createEpicInTaskManagerAndReturn();
         Subtask subtask = createSubtaskInTaskManagerAndReturn(epic.getId());
-        assertEquals(subtask, _taskManager.getSubtaskById(subtask.getId()), "Не возвращается существующая " +
+        assertEquals(subtask, taskManager.getSubtaskById(subtask.getId()), "Не возвращается существующая " +
                 "подзадача");
     }
 
@@ -102,27 +100,27 @@ class TaskManagerTest {
         final NoSuchElementException exception = assertThrows(
                 NoSuchElementException.class,
                 () -> {
-                    _taskManager.getEpicById(0);
+                    taskManager.getEpicById(0);
                 }, "Нет исключения на несуществующий id");
-        assertEquals("Элемента с id " + 0 + "не существует", exception.getMessage());
+        assertEquals("Элемента с id " + 0 + " не существует", exception.getMessage());
 
         Epic epic = createEpicInTaskManagerAndReturn();
-        assertEquals(epic, _taskManager.getEpicById(epic.getId()), "Не возвращается существующий эпик");
+        assertEquals(epic, taskManager.getEpicById(epic.getId()), "Не возвращается существующий эпик");
     }
 
     @Test
     void createTask() {
         Task task = createTaskInTaskManagerAndReturn();
         assertEquals(1, task.getId(), "Некорректная работа присвоения ID");
-        assertEquals(1, _taskManager.getAllTasks().size(), "Задача не добавляется в taskMap");
-        assertEquals(1, _taskManager.getPrioritizedTasks().size(),
+        assertEquals(1, taskManager.getAllTasks().size(), "Задача не добавляется в taskMap");
+        assertEquals(1, taskManager.getPrioritizedTasks().size(),
                 "Задача не добавляется в prioritizedTasks");
 
         Task task2 = new Task("Task2 Name", "Task2 Description", Status.DONE, startTime1, duration1);
         final IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> {
-                    _taskManager.createTask(task2);
+                    taskManager.createTask(task2);
                 }, "Нет исключения на пересечение задач по времени");
 
         assertEquals("Задача [" + task2.getName() + "] пересекается по времени с уже " +
@@ -135,8 +133,8 @@ class TaskManagerTest {
         Subtask subtask = createSubtaskInTaskManagerAndReturn(epic.getId());
         assertEquals(2, subtask.getId(), "Некорректная работа присвоения ID");
         assertEquals(1, epic.getSubtasks().size(), "Подзадача не добавляется в subtasksList эпика");
-        assertEquals(1, _taskManager.getAllSubtasks().size(), "Подзадача не добавляется в subtaskMap");
-        assertEquals(1, _taskManager.getPrioritizedTasks().size(),
+        assertEquals(1, taskManager.getAllSubtasks().size(), "Подзадача не добавляется в subtaskMap");
+        assertEquals(1, taskManager.getPrioritizedTasks().size(),
                 "Подзадача не добавляется в prioritizedTasks");
 
         Subtask subtask2 = new Subtask("Subtask2 Name", "Subtask2 Description", Status.NEW, epic.getId(),
@@ -144,7 +142,7 @@ class TaskManagerTest {
         final IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> {
-                    _taskManager.createSubtask(subtask2);
+                    taskManager.createSubtask(subtask2);
                 }, "Нет исключения на пересечение задач по времени");
 
         assertEquals("Подзадача [" + subtask2.getName() + "] пересекается по времени с уже " +
@@ -155,7 +153,7 @@ class TaskManagerTest {
     void createEpic() {
         Epic epic = createEpicInTaskManagerAndReturn();
         assertEquals(1, epic.getId(), "Некорректная работа присвоения ID");
-        assertEquals(1, _taskManager.getAllEpics().size(), "Эпик не добавляется в epicMap");
+        assertEquals(1, taskManager.getAllEpics().size(), "Эпик не добавляется в epicMap");
     }
 
     @Test
@@ -166,16 +164,16 @@ class TaskManagerTest {
         Task newTask = new Task("NEW Task Name", "NEW Task Description", Status.IN_PROGRESS, newDate,
                 newDuration);
         newTask.setId(task.getId());
-        _taskManager.updateTask(newTask);
-        assertEquals(1, _taskManager.getAllTasks().size(), "Некорректное добавление в taskMap");
-        assertEquals(newTask, _taskManager.getTaskById(task.getId()), "Некорректное обновление");
+        taskManager.updateTask(newTask);
+        assertEquals(1, taskManager.getAllTasks().size(), "Некорректное добавление в taskMap");
+        assertEquals(newTask, taskManager.getTaskById(task.getId()), "Некорректное обновление");
 
 
         LocalDateTime date2 = LocalDateTime.of(2024, 2, 2, 2, 0);
         Task task2 = new Task("Task2 Name", "Task2 Description", Status.IN_PROGRESS, date2,
                 duration2);
         newTask.setId(2);
-        _taskManager.createTask(task2);
+        taskManager.createTask(task2);
 
         LocalDateTime dateForEx = LocalDateTime.of(2024, 2, 2, 1, 10);
         Duration durationForEx = Duration.ofMinutes(60);
@@ -184,7 +182,7 @@ class TaskManagerTest {
         final IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> {
-                    _taskManager.updateTask(exTask);
+                    taskManager.updateTask(exTask);
                 }, "Нет исключения на пересечение задач по времени");
 
         assertEquals("Задача [" + exTask.getName() + "] пересекается по времени с уже " +
@@ -199,7 +197,7 @@ class TaskManagerTest {
                 Status.IN_PROGRESS, epic.getId(), startTime2, duration2);
         newSubtask.setId(subtask.getId());
 
-        _taskManager.updateSubtask(newSubtask);
+        taskManager.updateSubtask(newSubtask);
 
         subtask = epic.getSubtasks().get(0);
         assertEquals(newSubtask.getName(), subtask.getName(), "Имя подзадачи не обновилось");
@@ -210,7 +208,7 @@ class TaskManagerTest {
         assertEquals(newSubtask.getDuration(), subtask.getDuration(), "duration подзадачи не обновился");
         assertEquals(Status.IN_PROGRESS, epic.getStatus(),
                 "Статус эпика не обновился после обновления подзадачи");
-        assertEquals(newSubtask, _taskManager.getSubtaskById(subtask.getId()),
+        assertEquals(newSubtask, taskManager.getSubtaskById(subtask.getId()),
                 "Подзадача не обновилась в мапе");
 
         LocalDateTime date2 = LocalDateTime.of(2024, 3, 3, 3, 0);
@@ -218,7 +216,7 @@ class TaskManagerTest {
                 epic.getId(), date2,
                 duration2);
         subtask2.setId(2);
-        _taskManager.createTask(subtask2);
+        taskManager.createTask(subtask2);
 
         LocalDateTime dateForEx = LocalDateTime.of(2024, 3, 3, 1, 30);
         Subtask exSubtask = new Subtask("Subtask Name", "Subtask Description", Status.DONE,
@@ -227,7 +225,7 @@ class TaskManagerTest {
         final IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> {
-                    _taskManager.updateSubtask(exSubtask);
+                    taskManager.updateSubtask(exSubtask);
                 }, "Нет исключения на пересечение задач по времени");
 
         assertEquals("Подзадача [" + exSubtask.getName() + "] пересекается по времени с уже " +
@@ -240,8 +238,8 @@ class TaskManagerTest {
         Epic newEpic = new Epic("NEW Epic Name", "New Epic Description");
         newEpic.setId(epic.getId());
 
-        _taskManager.updateEpic(newEpic);
-        epic = _taskManager.getEpicById(epic.getId());
+        taskManager.updateEpic(newEpic);
+        epic = taskManager.getEpicById(epic.getId());
         assertEquals("NEW Epic Name", epic.getName(), "Обновление имени некорректно");
         assertEquals("New Epic Description", epic.getDescription(), "Обновление описания некорректно");
     }
@@ -251,13 +249,13 @@ class TaskManagerTest {
         final NoSuchElementException exception = assertThrows(
                 NoSuchElementException.class,
                 () -> {
-                    _taskManager.removeTaskById(0);
+                    taskManager.removeTaskById(0);
                 }, "Нет исключения на несуществующий id");
         assertEquals("Элемента с id " + 0 + "не существует", exception.getMessage());
         Task task = createTaskInTaskManagerAndReturn();
-        _taskManager.removeTaskById(task.getId());
-        assertEquals(0, _taskManager.getAllTasks().size(), "Задача не удалена из taskMap");
-        assertEquals(0, _taskManager.getAllTasks().size(), "Задача не удалена из prioritizedTasks");
+        taskManager.removeTaskById(task.getId());
+        assertEquals(0, taskManager.getAllTasks().size(), "Задача не удалена из taskMap");
+        assertEquals(0, taskManager.getAllTasks().size(), "Задача не удалена из prioritizedTasks");
     }
 
     @Test
@@ -265,18 +263,18 @@ class TaskManagerTest {
         final NoSuchElementException exception = assertThrows(
                 NoSuchElementException.class,
                 () -> {
-                    _taskManager.removeSubtaskById(0);
+                    taskManager.removeSubtaskById(0);
                 }, "Нет исключения на несуществующий id");
         assertEquals("Элемента с id " + 0 + "не существует", exception.getMessage());
 
         Epic epic = createEpicInTaskManagerAndReturn();
         Subtask subtask = createSubtaskInTaskManagerAndReturn(epic.getId());
         epic.setStatus(Status.IN_PROGRESS);
-        _taskManager.removeSubtaskById(subtask.getId());
+        taskManager.removeSubtaskById(subtask.getId());
         assertEquals(0, epic.getSubtasks().size(), "Подзадача не удалена из связанного эпика");
         assertEquals(Status.NEW, epic.getStatus(), "Не обновился статус эпика после удаления подзадачи");
-        assertEquals(0, _taskManager.getAllSubtasks().size(), "Подзадача не удалена из subtaskMap");
-        assertEquals(0, _taskManager.getPrioritizedTasks().size(),
+        assertEquals(0, taskManager.getAllSubtasks().size(), "Подзадача не удалена из subtaskMap");
+        assertEquals(0, taskManager.getPrioritizedTasks().size(),
                 "Подзадача не удалена из prioritizedTasks");
     }
 
@@ -285,23 +283,23 @@ class TaskManagerTest {
         final NoSuchElementException exception = assertThrows(
                 NoSuchElementException.class,
                 () -> {
-                    _taskManager.removeEpicById(0);
+                    taskManager.removeEpicById(0);
                 }, "Нет исключения на несуществующий id");
         assertEquals("Элемента с id " + 0 + "не существует", exception.getMessage());
         Epic epic = createEpicInTaskManagerAndReturn();
         Subtask subtask = createSubtaskInTaskManagerAndReturn(epic.getId());
-        _taskManager.removeEpicById(epic.getId());
-        assertEquals(0, _taskManager.getAllSubtasks().size(),
+        taskManager.removeEpicById(epic.getId());
+        assertEquals(0, taskManager.getAllSubtasks().size(),
                 "Не удалены подзадачи эпика в subtaskMap");
-        assertEquals(0, _taskManager.getAllEpics().size(), "Эпик не удалён в epicMap");
+        assertEquals(0, taskManager.getAllEpics().size(), "Эпик не удалён в epicMap");
     }
 
     @Test
     void removeAllTasks() {
         Task task = createTaskInTaskManagerAndReturn();
-        _taskManager.removeAllTasks();
-        assertEquals(0, _taskManager.getAllTasks().size(), "Задачи не были удалены из taskMap");
-        assertEquals(0, _taskManager.getPrioritizedTasks().size(),
+        taskManager.removeAllTasks();
+        assertEquals(0, taskManager.getAllTasks().size(), "Задачи не были удалены из taskMap");
+        assertEquals(0, taskManager.getPrioritizedTasks().size(),
                 "Задачи не были удалены из prioritizedTasks");
     }
 
@@ -310,12 +308,12 @@ class TaskManagerTest {
         Epic epic = createEpicInTaskManagerAndReturn();
         Subtask subtask = createSubtaskInTaskManagerAndReturn(epic.getId());
         epic.setStatus(Status.IN_PROGRESS);
-        _taskManager.removeAllSubtasks();
+        taskManager.removeAllSubtasks();
 
         assertEquals(0, epic.getSubtasks().size(), "Не очищены списки подзадачь эпиков");
         assertEquals(Status.NEW, epic.getStatus(), "Не обновился статус эпиков");
-        assertEquals(0, _taskManager.getAllSubtasks().size(), "Не очищена subtaskMap");
-        assertEquals(0, _taskManager.getPrioritizedTasks().size(),
+        assertEquals(0, taskManager.getAllSubtasks().size(), "Не очищена subtaskMap");
+        assertEquals(0, taskManager.getPrioritizedTasks().size(),
                 "Подзадачи не были удалены из prioritizedTasks");
     }
 
@@ -323,20 +321,20 @@ class TaskManagerTest {
     void removeAllEpics() {
         Epic epic = createEpicInTaskManagerAndReturn();
         Subtask subtask = createSubtaskInTaskManagerAndReturn(epic.getId());
-        _taskManager.removeAllEpics();
+        taskManager.removeAllEpics();
 
-        assertEquals(_taskManager.getAllEpics().size(), 0, "Не очищена epicMap");
-        assertEquals(_taskManager.getAllSubtasks().size(), 0, "Не очищена subtaskMap");
+        assertEquals(taskManager.getAllEpics().size(), 0, "Не очищена epicMap");
+        assertEquals(taskManager.getAllSubtasks().size(), 0, "Не очищена subtaskMap");
     }
 
     @Test
     void getHistory() {
-        assertEquals(_taskManager.getHistory().size(), 0, "История заполнена");
+        assertEquals(taskManager.getHistory().size(), 0, "История заполнена");
         Task task = createTaskInTaskManagerAndReturn();
         Epic epic = createEpicInTaskManagerAndReturn();
-        _taskManager.getTaskById(task.getId());
-        _taskManager.getEpicById(epic.getId());
-        assertEquals(_taskManager.getHistory().size(), 2, "История некорректно заполнена");
+        taskManager.getTaskById(task.getId());
+        taskManager.getEpicById(epic.getId());
+        assertEquals(taskManager.getHistory().size(), 2, "История некорректно заполнена");
     }
 
     @Test
@@ -344,7 +342,7 @@ class TaskManagerTest {
         Task task = createTaskInTaskManagerAndReturn();
         Epic epic = createEpicInTaskManagerAndReturn();
         Subtask subtask = createSubtaskInTaskManagerAndReturn(epic.getId());
-        Set<Task> prioritizedTasks = _taskManager.getPrioritizedTasks();
+        Set<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
         assertEquals(2, prioritizedTasks.size(),
                 "Некорректно заполнен список задач по приоритетности");
         assertEquals(task, prioritizedTasks.toArray()[0],

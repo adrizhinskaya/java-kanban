@@ -68,7 +68,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpicById(Integer id) {
         if (!epicMap.containsKey(id) || id == null) {
-            throw new NoSuchElementException("Элемента с id " + id + "не существует");
+            throw new NoSuchElementException("Элемента с id " + id + " не существует");
         }
         historyManager.add(epicMap.get(id));
         return epicMap.get(id);
@@ -180,6 +180,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         Epic currentEpic = epicMap.get(id);
         subtaskMap.values().removeIf(s -> s.getEpicId().equals(id));
+        prioritizedTasks.removeIf(task -> task instanceof Subtask && Objects.equals(((Subtask) task).getEpicId(), id));
         epicMap.remove(currentEpic.getId());
 
         for (Subtask s : currentEpic.getSubtasks()) {
