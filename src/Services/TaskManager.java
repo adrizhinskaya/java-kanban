@@ -10,6 +10,10 @@ import java.util.Set;
 
 public interface TaskManager {
 
+    List<Task> getHistory();
+
+    public Set<Task> getPrioritizedTasks();
+
     HashMap<Integer, Task> getAllTasks();
 
     HashMap<Integer, Subtask> getAllSubtasks();
@@ -45,8 +49,4 @@ public interface TaskManager {
     void removeAllSubtasks();
 
     void removeAllEpics();
-
-    List<Task> getHistory();
-
-    public Set<Task> getPrioritizedTasks();
 }

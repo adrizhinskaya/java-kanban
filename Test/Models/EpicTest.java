@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTest {
     Epic epic;
-    LocalDateTime startTime0 = LocalDateTime.of(2024,1,1,0,0);
+    LocalDateTime localDateTimeNow = LocalDateTime.now();
     LocalDateTime startTime1 = LocalDateTime.of(2024,2,2,0,0);
     LocalDateTime startTime2 = LocalDateTime.of(2024,3,3,0,0);
     Duration duration1 = Duration.ofMinutes(60);
@@ -32,8 +32,9 @@ class EpicTest {
     @Test
     public void shouldHaveNewStatusNullTimesAnd0DurationForEmptyList() {
         assertEquals(Status.NEW, epic.getStatus());
-        assertEquals(startTime0, epic.getStartTime());
-        assertEquals(startTime0, epic.getEndTime());
+        assertEquals(localDateTimeNow.toLocalDate(), epic.getStartTime().toLocalDate());
+        assertEquals(localDateTimeNow.toLocalDate(), epic.getStartTime().toLocalDate());
+        assertEquals(Duration.ofMinutes(0), epic.getDuration());
         assertEquals(Duration.ofMinutes(0), epic.getDuration());
     }
 

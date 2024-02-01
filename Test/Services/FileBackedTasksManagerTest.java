@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FileBackedTasksManagerTest {
     TaskManager _fileTaskManager;
-    LocalDateTime startTime0 = LocalDateTime.of(2024, 1, 1, 0, 0);
+    LocalDateTime localDateTimeNow = LocalDateTime.now();
     LocalDateTime startTime1 = LocalDateTime.of(2024, 2, 2, 0, 0);
     LocalDateTime startTime2 = LocalDateTime.of(2024, 3, 3, 0, 0);
     Duration duration1 = Duration.ofMinutes(60);
@@ -89,7 +89,7 @@ class FileBackedTasksManagerTest {
         assertEquals(1, resultBTM.getAllEpics().size());
         assertEquals(2, resultBTM.getHistory().size());
 
-        assertEquals(startTime0, resultBTM.getEpicById(epic.getId()).getStartTime());
-        assertEquals(startTime0, resultBTM.getEpicById(epic.getId()).getEndTime());
+        assertEquals(localDateTimeNow.toLocalDate(), resultBTM.getEpicById(epic.getId()).getStartTime().toLocalDate());
+        assertEquals(localDateTimeNow.toLocalDate(), resultBTM.getEpicById(epic.getId()).getEndTime().toLocalDate());
     }
 }

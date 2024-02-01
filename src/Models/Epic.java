@@ -10,9 +10,9 @@ public class Epic extends Task {
     private final ArrayList<Subtask> subtasks = new ArrayList<>();
 
     public Epic(String name, String description) {
-        super(name, description, Status.NEW, LocalDateTime.of(2024, 1,1,0,0),
+        super(name, description, Status.NEW, LocalDateTime.now(),
                 Duration.ofMinutes(0));
-        this.endTime = LocalDateTime.of(2024, 1,1,0,0);
+        updateEndTime();
     }
 
     public List<Subtask> getSubtasks() {
@@ -38,6 +38,7 @@ public class Epic extends Task {
         updateStartTime();
         updateEndTime();
     }
+
     public void updateStatus() {
         super.setStatus(checkSubtasksAndChooseStatus());
     }
@@ -90,7 +91,7 @@ public class Epic extends Task {
         if (subtasks.isEmpty()) {
             return subtasksDuration;
         }
-        for(Subtask s : subtasks) {
+        for (Subtask s : subtasks) {
             subtasksDuration = subtasksDuration.plus(s.getDuration());
         }
         return subtasksDuration;

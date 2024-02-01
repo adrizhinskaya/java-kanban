@@ -2,6 +2,7 @@ package Models;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Task {
     private int id;
@@ -71,7 +72,7 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
-        if(startTime == null) {
+        if (startTime == null) {
             throw new IllegalArgumentException("Введите значение startTime");
         }
         return startTime.plus(duration);
@@ -79,5 +80,23 @@ public class Task {
 
     public static int compareByStartTime(Task t1, Task t2) {
         return t1.getStartTime().compareTo(t2.getStartTime());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id
+                && Objects.equals(name, task.name)
+                && Objects.equals(description, task.description)
+                && status == task.status
+                && Objects.equals(startTime, task.startTime)
+                && Objects.equals(duration, task.duration);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, status, startTime, duration);
     }
 }

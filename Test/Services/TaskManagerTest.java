@@ -17,6 +17,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TaskManagerTest {
     TaskManager _taskManager;
+    LocalDateTime startTime0 = LocalDateTime.of(2024, 1, 1, 0, 0);
+    LocalDateTime startTime1 = LocalDateTime.of(2024, 2, 2, 0, 0);
+    LocalDateTime startTime2 = LocalDateTime.of(2024, 3, 3, 0, 0);
+    Duration duration1 = Duration.ofMinutes(60);
+    Duration duration2 = Duration.ofMinutes(120);
+    LocalDateTime endTime2 = startTime2.plus(duration2);
 
     @BeforeEach
     public void createTaskManager() {
@@ -104,18 +110,13 @@ class TaskManagerTest {
         assertEquals(epic, _taskManager.getEpicById(epic.getId()), "Не возвращается существующий эпик");
     }
 
-    LocalDateTime startTime0 = LocalDateTime.of(2024, 1, 1, 0, 0);
-    LocalDateTime startTime1 = LocalDateTime.of(2024, 2, 2, 0, 0);
-    LocalDateTime startTime2 = LocalDateTime.of(2024, 3, 3, 0, 0);
-    Duration duration1 = Duration.ofMinutes(60);
-    Duration duration2 = Duration.ofMinutes(120);
-    LocalDateTime endTime2 = startTime2.plus(duration2);
-
     @Test
     void createTask() {
         Task task = createTaskInTaskManagerAndReturn();
         assertEquals(1, task.getId(), "Некорректная работа присвоения ID");
         assertEquals(1, _taskManager.getAllTasks().size(), "Задача не добавляется в taskMap");
+        assertEquals(1, _taskManager.getPrioritizedTasks().size(),
+                "Задача не добавляется в prioritizedTasks");
 
         Task task2 = new Task("Task2 Name", "Task2 Description", Status.DONE, startTime1, duration1);
         final IllegalArgumentException exception = assertThrows(
@@ -135,6 +136,8 @@ class TaskManagerTest {
         assertEquals(2, subtask.getId(), "Некорректная работа присвоения ID");
         assertEquals(1, epic.getSubtasks().size(), "Подзадача не добавляется в subtasksList эпика");
         assertEquals(1, _taskManager.getAllSubtasks().size(), "Подзадача не добавляется в subtaskMap");
+        assertEquals(1, _taskManager.getPrioritizedTasks().size(),
+                "Подзадача не добавляется в prioritizedTasks");
 
         Subtask subtask2 = new Subtask("Subtask2 Name", "Subtask2 Description", Status.NEW, epic.getId(),
                 startTime2.plus(duration2), duration2);
@@ -253,7 +256,8 @@ class TaskManagerTest {
         assertEquals("Элемента с id " + 0 + "не существует", exception.getMessage());
         Task task = createTaskInTaskManagerAndReturn();
         _taskManager.removeTaskById(task.getId());
-        assertEquals(0, _taskManager.getAllTasks().size(), "Задача не удалена");
+        assertEquals(0, _taskManager.getAllTasks().size(), "Задача не удалена из taskMap");
+        assertEquals(0, _taskManager.getAllTasks().size(), "Задача не удалена из prioritizedTasks");
     }
 
     @Test
@@ -272,6 +276,8 @@ class TaskManagerTest {
         assertEquals(0, epic.getSubtasks().size(), "Подзадача не удалена из связанного эпика");
         assertEquals(Status.NEW, epic.getStatus(), "Не обновился статус эпика после удаления подзадачи");
         assertEquals(0, _taskManager.getAllSubtasks().size(), "Подзадача не удалена из subtaskMap");
+        assertEquals(0, _taskManager.getPrioritizedTasks().size(),
+                "Подзадача не удалена из prioritizedTasks");
     }
 
     @Test
@@ -294,7 +300,9 @@ class TaskManagerTest {
     void removeAllTasks() {
         Task task = createTaskInTaskManagerAndReturn();
         _taskManager.removeAllTasks();
-        assertEquals(0, _taskManager.getAllTasks().size(), "Задачи не были удалены");
+        assertEquals(0, _taskManager.getAllTasks().size(), "Задачи не были удалены из taskMap");
+        assertEquals(0, _taskManager.getPrioritizedTasks().size(),
+                "Задачи не были удалены из prioritizedTasks");
     }
 
     @Test
@@ -307,6 +315,8 @@ class TaskManagerTest {
         assertEquals(0, epic.getSubtasks().size(), "Не очищены списки подзадачь эпиков");
         assertEquals(Status.NEW, epic.getStatus(), "Не обновился статус эпиков");
         assertEquals(0, _taskManager.getAllSubtasks().size(), "Не очищена subtaskMap");
+        assertEquals(0, _taskManager.getPrioritizedTasks().size(),
+                "Подзадачи не были удалены из prioritizedTasks");
     }
 
     @Test
