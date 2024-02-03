@@ -8,9 +8,9 @@ import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     protected Integer id = 0;
-    protected final HashMap<Integer, Task> taskMap;
-    protected final HashMap<Integer, Epic> epicMap;
-    protected final HashMap<Integer, Subtask> subtaskMap;
+    protected HashMap<Integer, Task> taskMap;
+    protected HashMap<Integer, Epic> epicMap;
+    protected HashMap<Integer, Subtask> subtaskMap;
     protected Set<Task> prioritizedTasks = new TreeSet<>(Task::compareByStartTime);
     protected final HistoryManager historyManager;
 
@@ -19,7 +19,6 @@ public class InMemoryTaskManager implements TaskManager {
         this.epicMap = new HashMap<>();
         this.subtaskMap = new HashMap<>();
         this.historyManager = historyManager;
-        getPrioritizedTasks();
     }
 
     @Override
@@ -108,6 +107,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(Task task) {
+        if (!taskMap.containsKey(task.getId())) {
+            createTask(task);
+            return;
+        }
         Task oldTask = taskMap.get(task.getId());
         if (!task.getStartTime().isEqual(oldTask.getStartTime()) || !task.getDuration().equals(oldTask.getDuration())) {
             if (isTaskOverlaps(task)) {
@@ -120,6 +123,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubtask(Subtask subtask) {
+        if (!subtaskMap.containsKey(subtask.getId())) {
+            createSubtask(subtask);
+            return;
+        }
         Task oldSubtask = subtaskMap.get(subtask.getId());
         if (!subtask.getStartTime().isEqual(oldSubtask.getStartTime())
                 || !subtask.getDuration().equals(oldSubtask.getDuration())) {
@@ -143,6 +150,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateEpic(Epic newEpic) {
+        if (!epicMap.containsKey(newEpic.getId())) {
+            createEpic(newEpic);
+            return;
+        }
         Epic epic = epicMap.get(newEpic.getId());
         epic.setName(newEpic.getName());
         epic.setDescription(newEpic.getDescription());

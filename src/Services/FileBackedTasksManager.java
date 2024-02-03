@@ -17,7 +17,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private String filePath = "src\\Autosave\\";
     private boolean isFileCreated = false;
 
-    FileBackedTasksManager(HistoryManager historyManager, String filePath) {
+    public FileBackedTasksManager(HistoryManager historyManager, String filePath) {
         super(historyManager);
         this.filePath += filePath;
     }
@@ -34,7 +34,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private void save() {
+    protected void save() {
         if (!isFileCreated) {
             createFile();
         }
@@ -85,7 +85,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return "";
     }
 
-    public static FileBackedTasksManager loadFromFile(HistoryManager historyManager, File file) {
+    protected static FileBackedTasksManager loadFromFile(HistoryManager historyManager, File file) {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(historyManager, file.getName());
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {

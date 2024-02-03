@@ -1,10 +1,14 @@
 package Services;
 
+import Api.HttpTaskManager;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.File;
 
 public class Managers {
     public static TaskManager getDefault() {
-        return new InMemoryTaskManager(getDefaultHistory());
+        return new HttpTaskManager();
     }
 
     public static TaskManager getFileBackedTaskManager() {
@@ -15,7 +19,12 @@ public class Managers {
         return FileBackedTasksManager.loadFromFile(getDefaultHistory(), file);
     }
 
-    static HistoryManager getDefaultHistory() {
+    public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
+    }
+
+    public static Gson getGson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        return gsonBuilder.create();
     }
 }

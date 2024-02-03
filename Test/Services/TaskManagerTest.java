@@ -24,7 +24,7 @@ class TaskManagerTest {
 
     @BeforeEach
     public void createTaskManager() {
-        taskManager = Managers.getDefault();
+        taskManager = new InMemoryTaskManager(new InMemoryHistoryManager());
     }
 
     public Task createTaskInTaskManagerAndReturn() {
