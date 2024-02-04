@@ -22,6 +22,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         this.filePath += filePath;
     }
 
+    public FileBackedTasksManager(HistoryManager historyManager) {
+        super(historyManager);
+        this.filePath += "autosave_data.csv";
+    }
+
     private void createFile() {
         try {
             File file = new File(filePath);
@@ -117,7 +122,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private static void setIdGenerator(FileBackedTasksManager fileBackedTasksManager) {
+    public static void setIdGenerator(FileBackedTasksManager fileBackedTasksManager) {
         List<Task> taskList = Stream.concat(fileBackedTasksManager.taskMap.values().stream(),
                 Stream.concat(fileBackedTasksManager.epicMap.values().stream(),
                         fileBackedTasksManager.subtaskMap.values().stream())).collect(Collectors.toList());
@@ -193,7 +198,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 .forEach(historyManager::add);
     }
 
-    private static void fillPrioritizedTasks(FileBackedTasksManager fileBackedTasksManager) {
+    public static void fillPrioritizedTasks(FileBackedTasksManager fileBackedTasksManager) {
         fileBackedTasksManager.prioritizedTasks.addAll(
                 Stream.of(fileBackedTasksManager.taskMap.values(), fileBackedTasksManager.subtaskMap.values())
                         .flatMap(Collection::stream)

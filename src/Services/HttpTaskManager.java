@@ -1,31 +1,23 @@
-package Api;
+package Services;
 
+import Api.KVTaskClient;
 import Models.Epic;
 import Models.Subtask;
 import Models.Task;
-import Services.FileBackedTasksManager;
-import Services.Managers;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class HttpTaskManager extends FileBackedTasksManager {
     private static KVTaskClient kvTaskClient;
     private static Gson gson;
 
-    public HttpTaskManager() {
-        super(Managers.getDefaultHistory(), "autosave_data.csv");
+    public HttpTaskManager(HistoryManager historyManager) {
+        super(historyManager);
         try {
             kvTaskClient = new KVTaskClient();
         } catch (IOException e) {
@@ -50,15 +42,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
-    protected void sendText(HttpExchange h, String text) throws IOException {
-        byte[] resp = text.getBytes(UTF_8);
-        h.getResponseHeaders().add("Content-Type", "application/json");
-        h.sendResponseHeaders(200, resp.length);
-        h.getResponseBody().write(resp);
-    }
-
     public static HttpTaskManager load() throws IOException, InterruptedException {
-        HttpTaskManager taskManager = new HttpTaskManager();
+        HttpTaskManager taskManager = new HttpTaskManager(Managers.getDefaultHistory());
         try {
             String jsonTaskMap = kvTaskClient.load("taskMap");
             String jsonSubtaskMap = kvTaskClient.load("subtaskMap");
@@ -77,8 +62,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
             taskManager.taskMap = gson.fromJson(jsonTaskMap, taskMapType);
             taskManager.subtaskMap = gson.fromJson(jsonSubtaskMap, subtaskMapType);
             taskManager.epicMap = gson.fromJson(jsonEpicMap, epicMapType);
-            setIdGenerator(taskManager);
-            fillPrioritizedTasks(taskManager);
+            FileBackedTasksManager.setIdGenerator(taskManager);
+            FileBackedTasksManager.fillPrioritizedTasks(taskManager);
             List<Task> historyList = gson.fromJson(jsonHistory, historyListType);
             historyList.forEach(taskManager.historyManager::add);
         } catch (IOException e) {
@@ -87,23 +72,5 @@ public class HttpTaskManager extends FileBackedTasksManager {
             throw new RuntimeException(e);
         }
         return taskManager;
-    }
-
-    private static void setIdGenerator(HttpTaskManager taskManager) {
-        List<Task> taskList = Stream.concat(taskManager.taskMap.values().stream(),
-                Stream.concat(taskManager.epicMap.values().stream(),
-                        taskManager.subtaskMap.values().stream())).collect(Collectors.toList());
-
-        taskManager.id = taskList.stream()
-                .max(Comparator.comparingInt(Task::getId))
-                .get().getId();
-    }
-
-    private static void fillPrioritizedTasks(HttpTaskManager taskManager) {
-        taskManager.prioritizedTasks.addAll(
-                Stream.of(taskManager.taskMap.values(), taskManager.subtaskMap.values())
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toSet())
-        );
     }
 }

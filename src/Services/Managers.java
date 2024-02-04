@@ -1,6 +1,5 @@
 package Services;
 
-import Api.HttpTaskManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -8,7 +7,7 @@ import java.io.File;
 
 public class Managers {
     public static TaskManager getDefault() {
-        return new HttpTaskManager();
+        return new HttpTaskManager(getDefaultHistory());
     }
 
     public static TaskManager getFileBackedTaskManager() {
