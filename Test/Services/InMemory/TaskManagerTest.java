@@ -1,9 +1,12 @@
-package Services;
+package Services.InMemory;
 
 import Models.Epic;
 import Models.Status;
 import Models.Subtask;
 import Models.Task;
+import Services.InMemory.InMemoryHistoryManager;
+import Services.InMemory.InMemoryTaskManager;
+import Services.InMemory.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

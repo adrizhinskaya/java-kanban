@@ -1,9 +1,13 @@
-package Services;
+package Services.File;
 
 import Models.Epic;
 import Models.Status;
 import Models.Subtask;
 import Models.Task;
+import Services.File.FileBackedTasksManager;
+import Services.InMemory.InMemoryHistoryManager;
+import Services.InMemory.TaskManager;
+import Services.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +32,7 @@ class FileBackedTasksManagerTest {
     }
 
     public TaskManager createBackedTaskManagerFromFile() {
-        return Managers.getTaskManagerFromFile(new File("src\\Autosave\\autosave_data.csv"));
+        return Managers.getTaskManagerFromFile(new File("src\\resources\\autosave_data.csv"));
     }
 
     public Task createTaskInTaskManagerAndReturn() {

@@ -1,7 +1,9 @@
-package Services;
+package Services.InMemory;
 
 import Models.Status;
 import Models.Task;
+import Services.InMemory.HistoryManager;
+import Services.InMemory.InMemoryHistoryManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

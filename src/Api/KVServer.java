@@ -1,7 +1,5 @@
 package Api;
 
-import Services.Managers;
-import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
@@ -19,12 +17,10 @@ public class KVServer {
     public static final int PORT = 8080;
     private final String apiToken;
     private final HttpServer server;
-    private final Gson gson;
     private final Map<String, String> data = new HashMap<>();
 
     public KVServer() {
         apiToken = generateApiToken();
-        this.gson = Managers.getGson();
         try {
             server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
             server.createContext("/register", this::register);
@@ -57,8 +53,7 @@ public class KVServer {
                     return;
                 }
                 String value = data.get(key);
-                //String response = gson.toJson(value);
-                sendText(h, value);                                                                                          //
+                sendText(h, value);
             } else {
                 System.out.println("/save ждёт POST-запрос, а получил: " + h.getRequestMethod());
                 h.sendResponseHeaders(405, 0);

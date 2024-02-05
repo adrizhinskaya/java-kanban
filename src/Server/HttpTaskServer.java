@@ -1,10 +1,10 @@
-package Api;
+package Server;
 
 import Models.Epic;
 import Models.Subtask;
 import Models.Task;
 import Services.Managers;
-import Services.TaskManager;
+import Services.InMemory.TaskManager;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -84,13 +84,13 @@ public class HttpTaskServer {
                 String requestMethod = httpExchange.getRequestMethod();
                 switch (requestMethod) {
                     case "GET": {
-                        if (Pattern.matches("^/tasks/task$", path)) { // Пoлучение всех tasks
+                        if (Pattern.matches("^/tasks/task$", path)) {
                             String response = gson.toJson(taskManager.getAllTasks());
                             sendText(httpExchange, response);
                             break;
                         }
 
-                        if (Pattern.matches("^/tasks/task/\\?Id=\\d+$", path)) { // Получение по Id
+                        if (Pattern.matches("^/tasks/task/\\?Id=\\d+$", path)) {
                             String pathId = path.replaceFirst("/tasks/task/\\?Id=", "");
                             int taskId = parsePathId(pathId);
                             if (taskId != -1) {
@@ -106,14 +106,14 @@ public class HttpTaskServer {
                         break;
                     }
                     case "DELETE": {
-                        if (Pattern.matches("^/tasks/task$", path)) { // Удаление всех tasks
+                        if (Pattern.matches("^/tasks/task$", path)) {
                             taskManager.removeAllTasks();
                             System.out.println("Удалены все задачи");
                             httpExchange.sendResponseHeaders(200, 0);
                             break;
                         }
 
-                        if (Pattern.matches("^/tasks/task/\\?Id=\\d+$", path)) { // Удаление по Id
+                        if (Pattern.matches("^/tasks/task/\\?Id=\\d+$", path)) {
                             String pathId = path.replaceFirst("/tasks/task/\\?Id=", "");
                             int taskId = parsePathId(pathId);
                             if (taskId != -1) {

@@ -1,7 +1,9 @@
-package Services;
+package Services.File;
 
 import Exceptions.ManagerSaveException;
 import Models.*;
+import Services.InMemory.HistoryManager;
+import Services.InMemory.InMemoryTaskManager;
 
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 import java.io.*;
@@ -14,7 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private String filePath = "src\\Autosave\\";
+    private String filePath = "src\\resources\\";
     private boolean isFileCreated = false;
 
     public FileBackedTasksManager(HistoryManager historyManager, String filePath) {
@@ -90,7 +92,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return "";
     }
 
-    protected static FileBackedTasksManager loadFromFile(HistoryManager historyManager, File file) {
+    public static FileBackedTasksManager loadFromFile(HistoryManager historyManager, File file) {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(historyManager, file.getName());
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {

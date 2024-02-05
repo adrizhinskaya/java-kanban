@@ -1,13 +1,14 @@
-package Api;
+package Server;
 
 import Models.Epic;
 import Models.Status;
 import Models.Subtask;
 import Models.Task;
-import Services.InMemoryHistoryManager;
-import Services.InMemoryTaskManager;
+import Server.HttpTaskServer;
+import Services.InMemory.InMemoryHistoryManager;
+import Services.InMemory.InMemoryTaskManager;
 import Services.Managers;
-import Services.TaskManager;
+import Services.InMemory.TaskManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.AfterEach;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class HttpTaskServerTest {
-    private  HttpTaskServer taskServer;
+    private HttpTaskServer taskServer;
     private TaskManager taskManager;
     private final Gson gson = Managers.getGson();
 
